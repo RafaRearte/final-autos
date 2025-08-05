@@ -79,7 +79,14 @@ public class PiezaService {
     }
     
     public Optional<PiezaDTO> actualizarPieza(Long id, PiezaDTO piezaDTO) {
-        // TODO: Implementar método
+        // ----TODO: Implementar método
+        if (piezaRepository.existsById(id)) {
+            Pieza pieza = convertirAEntidad(piezaDTO);
+            pieza.setId(id);
+            Pieza piezaGuardada = piezaRepository.save(pieza);
+            return Optional.of(convertirADTO(piezaGuardada));
+        }
+        return Optional.empty();
     }
     
     public boolean eliminarPieza(Long id) {
@@ -91,7 +98,14 @@ public class PiezaService {
     }
     
     public boolean actualizarStock(Long id, Integer nuevoStock) {
-        // TODO: Implementar método
+        // ----TODO: Implementar método
+        Optional<Pieza> pieza = piezaRepository.findById(id);
+        if (pieza.isPresent()) {
+            pieza.get().setStock(nuevoStock);
+            piezaRepository.save(pieza.get());
+            return true;
+        }
+        return false;
     }
     
     private PiezaDTO convertirADTO(Pieza pieza) {
