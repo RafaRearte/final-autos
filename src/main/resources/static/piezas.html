@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Piezas Automotrices</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            border: none;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+        .search-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+        .modal-header {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-car"></i> Sistema Automotriz
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a class="nav-link active" href="piezas.html">
+                    <i class="fas fa-boxes"></i> Piezas
+                </a>
+                <a class="nav-link" href="facturacion.html">
+                    <i class="fas fa-file-invoice"></i> Facturación
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="text-center mb-3">
+                    <i class="fas fa-boxes text-primary"></i> Gestión de Piezas Automotrices
+                </h1>
+                <p class="text-center text-muted">Administra el inventario de piezas automotrices</p>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-box fa-2x mb-2"></i>
+                    <h4 id="totalPiezas">0</h4>
+                    <p class="mb-0">Total Piezas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <h4 id="stockBajo">0</h4>
+                    <p class="mb-0">Stock Bajo</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                    <h4 id="valorTotal">$0</h4>
+                    <p class="mb-0">Valor Total</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-tags fa-2x mb-2"></i>
+                    <h4 id="categorias">0</h4>
+                    <p class="mb-0">Categorías</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de búsqueda y filtros -->
+        <div class="search-box">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar piezas...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoriaFilter">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="marcaFilter">
+                        <option value="">Todas las marcas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-light w-100" onclick="mostrarFormulario()">
+                        <i class="fas fa-plus"></i> Nueva Pieza
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de piezas -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Código</th>
+                                <th>Categoría</th>
+                                <th>Marca</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="piezasTableBody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar pieza -->
+    <div class="modal fade" id="piezaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Nueva Pieza</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="piezaForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre *</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="codigo" class="form-label">Código *</label>
+                                    <input type="text" class="form-control" id="codigo" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría</label>
+                                    <select class="form-select" id="categoria">
+                                        <option value="">Seleccionar categoría</option>
+                                        <option value="Frenos">Frenos</option>
+                                        <option value="Motor">Motor</option>
+                                        <option value="Suspensión">Suspensión</option>
+                                        <option value="Eléctrico">Eléctrico</option>
+                                        <option value="Transmisión">Transmisión</option>
+                                        <option value="Carrocería">Carrocería</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="marca" class="form-label">Marca</label>
+                                    <input type="text" class="form-control" id="marca">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="modelo" class="form-label">Modelo</label>
+                                    <input type="text" class="form-control" id="modelo">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="precio" class="form-label">Precio *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="precio" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="stock" class="form-label">Stock *</label>
+                                    <input type="number" class="form-control" id="stock" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="descripcion" class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPieza()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para actualizar stock -->
+    <div class="modal fade" id="stockModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Actualizar Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="stockForm">
+                        <div class="mb-3">
+                            <label for="nuevoStock" class="form-label">Nuevo Stock</label>
+                            <input type="number" class="form-control" id="nuevoStock" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="actualizarStock()">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let piezas = [];
+        let piezaEditando = null;
+        let piezaStockEditando = null;
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarPiezas();
+            cargarFiltros();
+        });
+
+        // Cargar piezas desde la API
+        async function cargarPiezas() {
+            try {
+                const response = await fetch('/api/piezas');
+                piezas = await response.json();
+                mostrarPiezas(piezas);
+                actualizarEstadisticas();
+            } catch (error) {
+                console.error('Error al cargar piezas:', error);
+                mostrarAlerta('Error al cargar las piezas', 'danger');
+            }
+        }
+
+        // Mostrar piezas en la tabla
+        function mostrarPiezas(piezasAMostrar) {
+            const tbody = document.getElementById('piezasTableBody');
+            tbody.innerHTML = '';
+
+            piezasAMostrar.forEach(pieza => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pieza.id}</td>
+                    <td>${pieza.nombre}</td>
+                    <td><span class="badge bg-secondary">${pieza.codigo}</span></td>
+                    <td>${pieza.categoria || '-'}</td>
+                    <td>${pieza.marca || '-'}</td>
+                    <td>$${pieza.precio.toFixed(2)}</td>
+                    <td>
+                        <span class="badge ${pieza.stock < 10 ? 'bg-danger' : pieza.stock < 30 ? 'bg-warning' : 'bg-success'}">
+                            ${pieza.stock}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="editarPieza(${pieza.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="editarStock(${pieza.id})">
+                                <i class="fas fa-boxes"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="eliminarPieza(${pieza.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Actualizar estadísticas
+        function actualizarEstadisticas() {
+            const totalPiezas = piezas.length;
+            const stockBajo = piezas.filter(p => p.stock < 10).length;
+            const valorTotal = piezas.reduce((sum, p) => sum + (p.precio * p.stock), 0);
+            const categorias = new Set(piezas.map(p => p.categoria).filter(c => c)).size;
+
+            document.getElementById('totalPiezas').textContent = totalPiezas;
+            document.getElementById('stockBajo').textContent = stockBajo;
+            document.getElementById('valorTotal').textContent = `$${valorTotal.toFixed(2)}`;
+            document.getElementById('categorias').textContent = categorias;
+        }
+
+        // Cargar filtros
+        function cargarFiltros() {
+            const categorias = [...new Set(piezas.map(p => p.categoria).filter(c => c))];
+            const marcas = [...new Set(piezas.map(p => p.marca).filter(m => m))];
+
+            const categoriaFilter = document.getElementById('categoriaFilter');
+            const marcaFilter = document.getElementById('marcaFilter');
+
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categoriaFilter.appendChild(option);
+            });
+
+            marcas.forEach(marca => {
+                const option = document.createElement('option');
+                option.value = marca;
+                option.textContent = marca;
+                marcaFilter.appendChild(option);
+            });
+        }
+
+        // Filtros
+        document.getElementById('searchInput').addEventListener('input', filtrarPiezas);
+        document.getElementById('categoriaFilter').addEventListener('change', filtrarPiezas);
+        document.getElementById('marcaFilter').addEventListener('change', filtrarPiezas);
+
+        function filtrarPiezas() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoria = document.getElementById('categoriaFilter').value;
+            const marca = document.getElementById('marcaFilter').value;
+
+            const piezasFiltradas = piezas.filter(pieza => {
+                const matchSearch = pieza.nombre.toLowerCase().includes(searchTerm) ||
+                                  pieza.codigo.toLowerCase().includes(searchTerm);
+                const matchCategoria = !categoria || pieza.categoria === categoria;
+                const matchMarca = !marca || pieza.marca === marca;
+
+                return matchSearch && matchCategoria && matchMarca;
+            });
+
+            mostrarPiezas(piezasFiltradas);
+        }
+
+        // Mostrar formulario para nueva pieza
+        function mostrarFormulario() {
+            piezaEditando = null;
+            document.getElementById('modalTitle').textContent = 'Nueva Pieza';
+            document.getElementById('piezaForm').reset();
+            new bootstrap.Modal(document.getElementById('piezaModal')).show();
+        }
+
+        // Editar pieza
+        async function editarPieza(id) {
+            try {
+                const response = await fetch(`/api/piezas/${id}`);
+                const pieza = await response.json();
+                
+                piezaEditando = pieza;
+                document.getElementById('modalTitle').textContent = 'Editar Pieza';
+                document.getElementById('nombre').value = pieza.nombre;
+                document.getElementById('codigo').value = pieza.codigo;
+                document.getElementById('categoria').value = pieza.categoria || '';
+                document.getElementById('marca').value = pieza.marca || '';
+                document.getElementById('modelo').value = pieza.modelo || '';
+                document.getElementById('precio').value = pieza.precio;
+                document.getElementById('stock').value = pieza.stock;
+                document.getElementById('descripcion').value = pieza.descripcion || '';
+
+                new bootstrap.Modal(document.getElementById('piezaModal')).show();
+            } catch (error) {
+                console.error('Error al cargar pieza:', error);
+                mostrarAlerta('Error al cargar la pieza', 'danger');
+            }
+        }
+
+        // Guardar pieza
+        async function guardarPieza() {
+            const formData = {
+                nombre: document.getElementById('nombre').value,
+                codigo: document.getElementById('codigo').value,
+                categoria: document.getElementById('categoria').value,
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                precio: parseFloat(document.getElementById('precio').value),
+                stock: parseInt(document.getElementById('stock').value),
+                descripcion: document.getElementById('descripcion').value
+            };
+
+            try {
+                const url = piezaEditando ? `/api/piezas/${piezaEditando.id}` : '/api/piezas';
+                const method = piezaEditando ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('piezaModal')).hide();
+                    cargarPiezas();
+                    mostrarAlerta(
+                        piezaEditando ? 'Pieza actualizada exitosamente' : 'Pieza creada exitosamente',
+                        'success'
+                    );
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error al guardar pieza:', error);
+                mostrarAlerta('Error al guardar la pieza', 'danger');
+            }
+        }
+
+        // Editar stock
+        async function editarStock(id) {
+            try {
+                const response = await fetch(`/api/piezas/${id}`);
+                const pieza = await response.json();
+                
+                piezaStockEditando = pieza;
+                document.getElementById('nuevoStock').value = pieza.stock;
+                new bootstrap.Modal(document.getElementById('stockModal')).show();
+            } catch (error) {
+                console.error('Error al cargar pieza:', error);
+                mostrarAlerta('Error al cargar la pieza', 'danger');
+            }
+        }
+
+        // Actualizar stock
+        async function actualizarStock() {
+            const nuevoStock = parseInt(document.getElementById('nuevoStock').value);
+
+            try {
+                const response = await fetch(`/api/piezas/${piezaStockEditando.id}/stock`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nuevoStock)
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('stockModal')).hide();
+                    cargarPiezas();
+                    mostrarAlerta('Stock actualizado exitosamente', 'success');
+                } else {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+            } catch (error) {
+                console.error('Error al actualizar stock:', error);
+                mostrarAlerta('Error al actualizar el stock', 'danger');
+            }
+        }
+
+        // Eliminar pieza
+        async function eliminarPieza(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta pieza?')) {
+                try {
+                    const response = await fetch(`/api/piezas/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        cargarPiezas();
+                        mostrarAlerta('Pieza eliminada exitosamente', 'success');
+                    } else {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar pieza:', error);
+                    mostrarAlerta('Error al eliminar la pieza', 'danger');
+                }
+            }
+        }
+
+        // Mostrar alerta
+        function mostrarAlerta(mensaje, tipo) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

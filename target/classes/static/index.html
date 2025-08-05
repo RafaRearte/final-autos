@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Automotriz - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+        }
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+        }
+        .icon-large {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .quick-actions {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+        .recent-activity {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+        .activity-item {
+            border-left: 3px solid #007bff;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-car"></i> Sistema Automotriz
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" href="index.html">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a class="nav-link" href="piezas.html">
+                    <i class="fas fa-boxes"></i> Piezas
+                </a>
+                <a class="nav-link" href="facturacion.html">
+                    <i class="fas fa-file-invoice"></i> Facturación
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="fas fa-car"></i> Sistema de Gestión Automotriz
+                    </h1>
+                    <p class="lead mb-4">
+                        Gestiona tu inventario de piezas automotrices y facturación de ventas de manera eficiente y profesional.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="piezas.html" class="btn btn-light btn-lg">
+                            <i class="fas fa-boxes"></i> Gestionar Piezas
+                        </a>
+                        <a href="facturacion.html" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-file-invoice"></i> Crear Factura
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-car fa-6x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Estadísticas Generales -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-box fa-2x mb-3"></i>
+                    <h3 id="totalPiezas">0</h3>
+                    <p class="mb-0">Total Piezas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-file-invoice fa-2x mb-3"></i>
+                    <h3 id="totalFacturas">0</h3>
+                    <p class="mb-0">Total Facturas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-dollar-sign fa-2x mb-3"></i>
+                    <h3 id="totalVentas">$0</h3>
+                    <p class="mb-0">Total Ventas</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                    <h3 id="stockBajo">0</h3>
+                    <p class="mb-0">Stock Bajo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Características Principales -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-star text-warning"></i> Características Principales
+                </h2>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <i class="fas fa-boxes icon-large text-primary"></i>
+                    <h4>Gestión de Inventario</h4>
+                    <p class="text-muted">
+                        Administra tu catálogo de piezas automotrices con información detallada, 
+                        control de stock y categorización por marcas y modelos.
+                    </p>
+                    <a href="piezas.html" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> Ir a Piezas
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <i class="fas fa-file-invoice icon-large text-success"></i>
+                    <h4>Sistema de Facturación</h4>
+                    <p class="text-muted">
+                        Crea facturas profesionales con múltiples items, cálculo automático de impuestos 
+                        y gestión completa del ciclo de ventas.
+                    </p>
+                    <a href="facturacion.html" class="btn btn-success">
+                        <i class="fas fa-arrow-right"></i> Ir a Facturación
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <i class="fas fa-chart-line icon-large text-warning"></i>
+                    <h4>Reportes y Estadísticas</h4>
+                    <p class="text-muted">
+                        Obtén insights valiosos sobre tus ventas, inventario y rendimiento 
+                        con reportes detallados y estadísticas en tiempo real.
+                    </p>
+                    <button class="btn btn-warning" onclick="mostrarReportes()">
+                        <i class="fas fa-chart-bar"></i> Ver Reportes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas y Actividad Reciente -->
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <div class="recent-activity">
+                    <h4 class="mb-3">
+                        <i class="fas fa-clock text-primary"></i> Actividad Reciente
+                    </h4>
+                    <div id="actividadReciente">
+                        <div class="activity-item">
+                            <small class="text-muted">Hace 2 horas</small>
+                            <p class="mb-1"><strong>Nueva factura creada:</strong> FAC-20241201-000001</p>
+                            <small>Cliente: Juan Pérez - Total: $181.50</small>
+                        </div>
+                        <div class="activity-item">
+                            <small class="text-muted">Hace 4 horas</small>
+                            <p class="mb-1"><strong>Stock actualizado:</strong> Filtro de Aceite</p>
+                            <small>Nuevo stock: 45 unidades</small>
+                        </div>
+                        <div class="activity-item">
+                            <small class="text-muted">Hace 6 horas</small>
+                            <p class="mb-1"><strong>Nueva pieza agregada:</strong> Pastillas de Freno</p>
+                            <small>Categoría: Frenos - Precio: $89.99</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="quick-actions">
+                    <h4 class="mb-3">
+                        <i class="fas fa-bolt"></i> Acciones Rápidas
+                    </h4>
+                    <div class="d-grid gap-2">
+                        <a href="piezas.html" class="btn btn-light">
+                            <i class="fas fa-plus"></i> Agregar Nueva Pieza
+                        </a>
+                        <a href="facturacion.html" class="btn btn-light">
+                            <i class="fas fa-file-invoice"></i> Crear Nueva Factura
+                        </a>
+                        <button class="btn btn-light" onclick="verStockBajo()">
+                            <i class="fas fa-exclamation-triangle"></i> Ver Stock Bajo
+                        </button>
+                        <button class="btn btn-light" onclick="generarReporte()">
+                            <i class="fas fa-chart-bar"></i> Generar Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            <i class="fas fa-info-circle text-info"></i> Información del Sistema
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Características Técnicas:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> Spring Boot 3.5.4</li>
+                                    <li><i class="fas fa-check text-success"></i> Base de datos H2</li>
+                                    <li><i class="fas fa-check text-success"></i> API REST completa</li>
+                                    <li><i class="fas fa-check text-success"></i> Interfaz responsive</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Funcionalidades:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success"></i> CRUD completo de piezas</li>
+                                    <li><i class="fas fa-check text-success"></i> Sistema de facturación</li>
+                                    <li><i class="fas fa-check text-success"></i> Control de stock automático</li>
+                                    <li><i class="fas fa-check text-success"></i> Cálculo de impuestos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-car"></i> Sistema Automotriz</h5>
+                    <p class="mb-0">
+                        Sistema completo de gestión para talleres automotrices y distribuidores de piezas.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6>Enlaces Útiles</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="piezas.html" class="text-light">Gestión de Piezas</a></li>
+                        <li><a href="facturacion.html" class="text-light">Sistema de Facturación</a></li>
+                        <li><a href="#" class="text-light">Documentación</a></li>
+                        <li><a href="#" class="text-light">Soporte</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <small>&copy; 2024 Sistema Automotriz. Todos los derechos reservados.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cargar estadísticas al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadisticas();
+        });
+
+        // Cargar estadísticas desde las APIs
+        async function cargarEstadisticas() {
+            try {
+                // Cargar estadísticas de piezas
+                const piezasResponse = await fetch('/api/piezas');
+                const piezas = await piezasResponse.json();
+                
+                const totalPiezas = piezas.length;
+                const stockBajo = piezas.filter(p => p.stock < 10).length;
+                const valorTotal = piezas.reduce((sum, p) => sum + (p.precio * p.stock), 0);
+
+                document.getElementById('totalPiezas').textContent = totalPiezas;
+                document.getElementById('stockBajo').textContent = stockBajo;
+
+                // Cargar estadísticas de facturas
+                const facturasResponse = await fetch('/api/facturas');
+                const facturas = await facturasResponse.json();
+                
+                const totalFacturas = facturas.length;
+                const totalVentas = facturas.filter(f => f.estado === 'PAGADA')
+                                           .reduce((sum, f) => sum + f.total, 0);
+
+                document.getElementById('totalFacturas').textContent = totalFacturas;
+                document.getElementById('totalVentas').textContent = `$${totalVentas.toFixed(2)}`;
+
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        // Función para mostrar reportes
+        function mostrarReportes() {
+            mostrarAlerta('Función de reportes en desarrollo. Próximamente disponible.', 'info');
+        }
+
+        // Función para ver stock bajo
+        function verStockBajo() {
+            window.location.href = 'piezas.html';
+        }
+
+        // Función para generar reporte
+        function generarReporte() {
+            mostrarAlerta('Función de generación de reportes en desarrollo.', 'info');
+        }
+
+        // Mostrar alerta
+        function mostrarAlerta(mensaje, tipo) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Actualizar estadísticas cada 30 segundos
+        setInterval(cargarEstadisticas, 30000);
+    </script>
+</body>
+</html> 
